@@ -1,13 +1,7 @@
 const express = require("express");
 const userRouter = express.Router();
-const userModel = require("../model/user");
 const productModel = require("../model/product");
-// const bcrypt = require("bcrypt");
-// const TOKEN_SECRET = "b91028378997c0b3581821456edefd417606a";
-// const jwt = require("jsonwebtoken");
-const controller = require('../controller/auth')
-const { verifyMiddelware } = require("../verifyToken");
-const { body, validationResult } = require("express-validator");
+const controller = require('../controller/userController')
 const multer = require("multer");
 const path = require("path");
 const storage = multer.diskStorage({
@@ -52,43 +46,10 @@ userRouter.get("/upload", (req, res) => {
 });
 
 
-userRouter.post(
-  "/signup",
-  body("name").isLength({ min: 25 }).withMessage("enter a valid name"),
-  body("email").isEmail().withMessage("enter a valid email"),
-  body("password")
-    .isLength({ min: 3 })
-    .withMessage("password must be atleast 6 characters"),
-  (req, res) => {
-    const newHash = bcrypt.hash(req.body.password, 10, function (err, hash) {
-      if (err) {
-      } else if (hash) {
-        let user = new userModel({
-          name: req.body.name,
-          lname: req.body.lname,
-          email: req.body.email,
-          password: hash,
-        });
-        console.log(user);
-        user
-          .save()
-          .then((data) => {
-            res.status(200).send({ data });
-          })
-          .catch((err) => {
-            res.status(400).send({ err });
-          });
-      }
-    });
-  }
-);
+userRouter.post("/signup",controller.signUp);
 
 userRouter.post("/login",controller.loginUser);
 
-userRouter.post("/verify", verifyMiddelware, (req, res) => {
-  res.json(req.body);
-});
-//search api
 userRouter.get("/search/:key", controller.search)
 
 module.exports = userRouter;
