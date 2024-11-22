@@ -13,7 +13,9 @@ mongoose.connect(config.DB).then(()=>{
 .catch(err=>{
     console.log(err)
 })
-
+app.get('/', ( req, res )=>{
+    res.status(200).send("Successfull done")
+})
 app.use(cors())
 app.use(express.json())
 app.use("/user",userRoute)
